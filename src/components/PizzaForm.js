@@ -1,8 +1,26 @@
-import React from "react";
+function PizzaForm({pizza, handleOnChange, setReload}) {
+const {topping, size, vegitarian} = pizza
+const onInputChange = (e) => {
+  handleOnChange(e.target.name, e.target.value)
+}
+const onRadioChange = (e) => {
+  handleOnChange(e.target.name, e.target.value === "Vegitarian")
+}
 
-function PizzaForm() {
+const handleSubmit = (e) => {
+e.preventDefault()
+setReload(prev => !prev)
+fetch(`http://localhost:3001/pizzas/${pizza.id}`, {
+  method: "PATCH",
+  headers: {
+    "Content-type": "application/json"
+  },
+  body: JSON.stringify(pizza)
+});
+
+}
   return (
-    <form onSubmit={null /*handle that submit*/}>
+    <form onSubmit={handleSubmit}>
       <div className="form-row">
         <div className="col-5">
           <input
@@ -10,10 +28,12 @@ function PizzaForm() {
             type="text"
             name="topping"
             placeholder="Pizza Topping"
+            value={topping}
+            onChange={onInputChange}
           />
         </div>
         <div className="col">
-          <select className="form-control" name="size">
+          <select className="form-control" name="size" value={size} onChange={onInputChange}>
             <option value="Small">Small</option>
             <option value="Medium">Medium</option>
             <option value="Large">Large</option>
@@ -26,6 +46,8 @@ function PizzaForm() {
               type="radio"
               name="vegetarian"
               value="Vegetarian"
+              checked={vegitarian}
+              onChange={onRadioChange}
             />
             <label className="form-check-label">Vegetarian</label>
           </div>
@@ -35,6 +57,8 @@ function PizzaForm() {
               type="radio"
               name="vegetarian"
               value="Not Vegetarian"
+              checked={!vegitarian}
+              onChange={onRadioChange}
             />
             <label className="form-check-label">Not Vegetarian</label>
           </div>
